@@ -26,7 +26,7 @@ esac
 
 SOURCESROOT="/home/ajnasz/src";
 PREFIX='/usr/local';
-BUILDCMD="make -j2 --prefix=$PREFIX";
+BUILDCMD="make -j2";
 CLEANCMD="make clean";
 INSTALLCMD='sudo make install';
 SRCDIR='';
@@ -91,7 +91,7 @@ while getopts "p:v:b:o:hsc" Option; do
 
         'vim')
           SRCDIR="$SOURCESROOT/vim7.2"
-          CONFIGUREOPTS="--enable-clock --enable-outputs"
+          CONFIGUREOPTS="$CONFIGUREOPTS"
           VCS="svn"
         ;;
 
@@ -113,7 +113,7 @@ while getopts "p:v:b:o:hsc" Option; do
         'urxvt')
           SRCDIR="$SOURCESROOT/rxvt-unicode"
           VCS="cvs"
-          CONFIGUREOPTS="--enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl"
           PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
         ;;
 
@@ -151,7 +151,7 @@ while getopts "p:v:b:o:hsc" Option; do
 
         'kernel')
           VCS='none'
-          SRCDIR='kernel/latest'
+          SRCDIR="$SOURCESROOT/kernel/latest"
           NOSOURCE=1
           NOCONF=1
           BUILDCMD="make-kpkg clean;CONCURRENCY_LEVEL=2 time fakeroot make-kpkg --append-to-version=-ajnasz kernel_image kernel_headers"
@@ -161,16 +161,17 @@ while getopts "p:v:b:o:hsc" Option; do
 
         'irssi')
           VCS='svn';
-          SRCDIR='irssi'
+          SRCDIR="$SOURCESROOT/irssi"
         ;;
 
         'git')
           VCS='git';
-          SRCDIR='git';
+          SRCDIR="$SOURCESROOT/git";
           BUILDCMD="make prefix=$PREFIX all -j2";
           INSTALLCMD="make prefix=$PREFIX install";
         ;;
-      esac
+      esac;
+    ;;
 
     'o')
       CONFIGUREOPTS="$OPTARG"
