@@ -5,7 +5,7 @@ echo "$ ./build [arguments]"
 echo "Arguments"
 printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
 printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
-printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', kernel\n"
+printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', kernel, irssi, git\n"
 printf "\t-o\tuse it to to specify custom configure options\n"
 printf "\t-s\tuse it if you don't want to update the source\n"
 printf "\t-c\tuse it if you don't want to run the configure script\n"
@@ -24,17 +24,20 @@ case $1 in
 esac
 }
 
-SOURCESROOT="/home/ajnasz/src"
-SRCDIR=''
-CONFIGUREOPTS=''
-NOSOURCE=0
-NOCONF=0
-NOINSTALL=0
-NOBUILD=0
-BUILDCMD=0
-PATCH=0
+SOURCESROOT="/home/ajnasz/src";
+PREFIX='/usr/local';
+BUILDCMD="make -j2 --prefix=$PREFIX";
+CLEANCMD="make clean";
+INSTALLCMD='sudo make install';
+SRCDIR='';
+CONFIGUREOPTS="--prefix=$PREFIX";
+NOSOURCE=0;
+NOCONF=0;
+NOINSTALL=0;
+NOBUILD=0;
+PATCH=0;
+VCS='';
 
-VCS=''
 while getopts "p:v:b:o:hsc" Option; do
   case $Option in
     'p') # path
@@ -61,123 +64,136 @@ while getopts "p:v:b:o:hsc" Option; do
 
     'b') # predefined project
 
-    case $OPTARG in
+      case $OPTARG in
 
-      'mpd')
-      SRCDIR="$SOURCESROOT/mpd"
-      VCS="git"
-      CONFIGUREOPTS="--enable-lastfm"
-      ;;
+        'mpd')
+          SRCDIR="$SOURCESROOT/mpd"
+          VCS="git"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm"
+        ;;
 
-      'mpdas')
-      SRCDIR="$SOURCESROOT/mpdas"
-      VCS="git"
-      ;;
+        'mpdas')
+          SRCDIR="$SOURCESROOT/mpdas"
+          VCS="git"
+          NOCONF=1
+        ;;
 
-      'ncmpcpp')
-      SRCDIR="$SOURCESROOT/ncmpcpp"
-      VCS="git"
-      CONFIGUREOPTS="--enable-clock --enable-outputs"
-      ;;
+        'ncmpcpp')
+          SRCDIR="$SOURCESROOT/ncmpcpp"
+          VCS="git"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-clock --enable-outputs"
+        ;;
 
-      'fluxbox')
-      SRCDIR="$SOURCESROOT/fluxbox"
-      VCS="git"
-      ;;
+        'fluxbox')
+          SRCDIR="$SOURCESROOT/fluxbox"
+          VCS="git"
+        ;;
 
-      'vim')
-      SRCDIR="$SOURCESROOT/vim7.2"
-      CONFIGUREOPTS="--enable-clock --enable-outputs"
-      VCS="svn"
-      ;;
+        'vim')
+          SRCDIR="$SOURCESROOT/vim7.2"
+          CONFIGUREOPTS="--enable-clock --enable-outputs"
+          VCS="svn"
+        ;;
 
-      'mplayer')
-      SRCDIR="$SOURCESROOT/mplayer"
-      VCS="svn"
-      ;;
+        'mplayer')
+          SRCDIR="$SOURCESROOT/mplayer"
+          VCS="svn"
+        ;;
 
-      'rtorrent')
-      SRCDIR="$SOURCESROOT/rtorrent"
-      VCS="svn"
-      ;;
+        'rtorrent')
+          SRCDIR="$SOURCESROOT/rtorrent"
+          VCS="svn"
+        ;;
 
-      'libtorrent')
-      SRCDIR="$SOURCESROOT/libtorrent"
-      VCS="svn"
-      ;;
+        'libtorrent')
+          SRCDIR="$SOURCESROOT/libtorrent"
+          VCS="svn"
+        ;;
 
-      'urxvt')
-      SRCDIR="$SOURCESROOT/rxvt-unicode"
-      VCS="cvs"
-      CONFIGUREOPTS="--enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl"
-      PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
-      ;;
+        'urxvt')
+          SRCDIR="$SOURCESROOT/rxvt-unicode"
+          VCS="cvs"
+          CONFIGUREOPTS="--enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl"
+          PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
+        ;;
 
-      'qemu')
-        SRCDIR="$SOURCESROOT/qemu-0.10.5"
-        NOSOURCE=1
-      ;;
+        'qemu')
+          SRCDIR="$SOURCESROOT/qemu-0.10.5"
+          NOSOURCE=1
+        ;;
 
-      'mutt')
+        'mutt')
 
-        # DEBIAN CONF:
-        # -DOMAIN
-        # +DEBUG
-        # -HOMESPOOL  +USE_SETGID  +USE_DOTLOCK  +DL_STANDALONE  
-        # +USE_FCNTL  -USE_FLOCK   
-        # +USE_POP  +USE_IMAP  +USE_SMTP  +USE_GSS  -USE_SSL_OPENSSL  +USE_SSL_GNUTLS  +USE_SASL  +HAVE_GETADDRINFO  
-        # +HAVE_REGCOMP  -USE_GNU_REGEX  
-        # +HAVE_COLOR  +HAVE_START_COLOR  +HAVE_TYPEAHEAD  +HAVE_BKGDSET  
-        # +HAVE_CURS_SET  +HAVE_META  +HAVE_RESIZETERM  
-        # +CRYPT_BACKEND_CLASSIC_PGP  +CRYPT_BACKEND_CLASSIC_SMIME  -CRYPT_BACKEND_GPGME  
-        # -EXACT_ADDRESS  -SUN_ATTACHMENT  
-        # +ENABLE_NLS  -LOCALES_HACK  +COMPRESSED  +HAVE_WC_FUNCS  +HAVE_LANGINFO_CODESET  +HAVE_LANGINFO_YESEXPR  
-        # +HAVE_ICONV  -ICONV_NONTRANS  +HAVE_LIBIDN  +HAVE_GETSID  +USE_HCACHE  
-        # -ISPELL
+          # DEBIAN CONF:
+          # -DOMAIN
+          # +DEBUG
+          # -HOMESPOOL  +USE_SETGID  +USE_DOTLOCK  +DL_STANDALONE  
+          # +USE_FCNTL  -USE_FLOCK   
+          # +USE_POP  +USE_IMAP  +USE_SMTP  +USE_GSS  -USE_SSL_OPENSSL  +USE_SSL_GNUTLS  +USE_SASL  +HAVE_GETADDRINFO  
+          # +HAVE_REGCOMP  -USE_GNU_REGEX  
+          # +HAVE_COLOR  +HAVE_START_COLOR  +HAVE_TYPEAHEAD  +HAVE_BKGDSET  
+          # +HAVE_CURS_SET  +HAVE_META  +HAVE_RESIZETERM  
+          # +CRYPT_BACKEND_CLASSIC_PGP  +CRYPT_BACKEND_CLASSIC_SMIME  -CRYPT_BACKEND_GPGME  
+          # -EXACT_ADDRESS  -SUN_ATTACHMENT  
+          # +ENABLE_NLS  -LOCALES_HACK  +COMPRESSED  +HAVE_WC_FUNCS  +HAVE_LANGINFO_CODESET  +HAVE_LANGINFO_YESEXPR  
+          # +HAVE_ICONV  -ICONV_NONTRANS  +HAVE_LIBIDN  +HAVE_GETSID  +USE_HCACHE  
+          # -ISPELL
 
-        SRCDIR="$SOURCESROOT/mutt"
-        VCS="hg"
-        CONFIGUREOPTS="--enable-external-dotlock"
-        CONFIGUREOPTS="${CONFIGUREOPTS} --enable-debug"
-        CONFIGUREOPTS="${CONFIGUREOPTS} --enable-external-dotlock"
-        CONFIGUREOPTS="${CONFIGUREOPTS} --enable-pop --enable-imap --enable-smtp --with-gss --with-gnutls --with-sasl"
-        CONFIGUREOPTS="${CONFIGUREOPTS} --with-idn"
-        CONFIGUREOPTS="${CONFIGUREOPTS}  --enable-hcache"
-      ;;
+          SRCDIR="$SOURCESROOT/mutt"
+          VCS="hg"
+          CONFIGUREOPTS="--enable-external-dotlock"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-debug"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-external-dotlock"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-pop --enable-imap --enable-smtp --with-gss --with-gnutls --with-sasl"
+          CONFIGUREOPTS="$CONFIGUREOPTS --with-idn"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-hcache"
+        ;;
 
-      'kernel')
-        VCS='none';
-        SRCDIR='kernel/latest'
-        NOSOURCE=1
-        NOCONF=1
-        BUILDCMD="make-kpkg clean;CONCURRENCY_LEVEL=2 time fakeroot make-kpkg --append-to-version=-ajnasz kernel_image kernel_headers"
-        NOINSTALL=1
-      ;;
-    esac
-    ;;
+        'kernel')
+          VCS='none'
+          SRCDIR='kernel/latest'
+          NOSOURCE=1
+          NOCONF=1
+          BUILDCMD="make-kpkg clean;CONCURRENCY_LEVEL=2 time fakeroot make-kpkg --append-to-version=-ajnasz kernel_image kernel_headers"
+          NOINSTALL=1
+        ;;
+
+
+        'irssi')
+          VCS='svn';
+          SRCDIR='irssi'
+        ;;
+
+        'git')
+          VCS='git';
+          SRCDIR='git';
+          BUILDCMD="make prefix=$PREFIX all -j2";
+          INSTALLCMD="make prefix=$PREFIX install";
+        ;;
+      esac
 
     'o')
-    CONFIGUREOPTS="$OPTARG"
+      CONFIGUREOPTS="$OPTARG"
     ;;
 
     's')
-    NOSOURCE=1
+      NOSOURCE=1
     ;;
 
     'c') # no configure
-    NOCONF=1
+      NOCONF=1
     ;;
 
     'i') # no install
-    NOINSTALL=1
+      NOINSTALL=1
     ;;
 
     'm') # no build
-    NOBUILD=1
+      NOBUILD=1
     ;;
 
     'h') # help
-    help;
+      help;
     exit 0;
     ;;
   esac
@@ -222,26 +238,14 @@ fi
 
 if [ $NOBUILD -eq 0 ];
 then
-  if [ $BUILDCMD -ne 0 ];
+  echo $CLEANCMD;
+  if ! $CLEANCMD;
   then
-    if [ $CLEANCMD -ne 0 ];
-    then
-      echo $CLEANCMD;
-      $CLEANCMD;
-    else
-      echo "what can I clean?";
-    fi
-  else
-    echo "make clean"
-    sleep 2
-    if ! make clean;
-    then
-      echo "stopped"
-      exit 1
-    fi
+    echo "$CLEANCMD failed";
+    exit 1;
   fi
 else
-  echo "skip make"
+  echo "skip clean"
 fi
 
 if [ $NOCONF -eq 0 ];
@@ -274,17 +278,10 @@ fi;
 
 if [ $NOBUILD -eq 0 ];
 then
-  if [ $BUILDCMD -ne 0 ];
+  echo $BUILDCMD;
+  if ! $BUILDCMD;
   then
-    echo $BUILDCMD;
-    $BUILCMD;
-  else
-    echo "make"
-    sleep 2
-    if ! make -j2;
-    then
-      exit 1
-    fi
+    exit 1;
   fi
 else
   echo "skip building"
@@ -296,15 +293,15 @@ then
   read INSTALLE
   case "$INSTALLE" in
     'y' | 'yes' | 'i' | 'igen' | 'I' | 'Y')
-    if ! sudo make install;
-    then 
-      exit 1;
-    fi
+      if ! $INSTALLCMD;
+      then 
+        exit 1;
+      fi
     ;;
     *)
-    echo "bad answer"
-    echo "exit"
-    exit 5
+      echo "bad answer"
+      echo "exit"
+      exit 5
   esac
 else
   echo "skip install"
