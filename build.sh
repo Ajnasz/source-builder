@@ -21,6 +21,12 @@ case $1 in
   'hg') hg pull;hg update;;
   'svn') svn up;;
   'cvs') cvs up;;
+  '*')
+    echo "ERROR: invalid VCS"
+    echo
+    help
+    exit 4
+  ;;
 esac
 }
 
@@ -217,12 +223,6 @@ elif ! [ -d "$SRCDIR" ]; then
   echo
   help
   exit 3
-elif [ -z "$VCS" ];
-then
-  echo "ERROR: invalid VCS"
-  echo
-  help
-  exit 4
 fi
 
 
