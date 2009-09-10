@@ -158,7 +158,9 @@ while getopts "p:v:b:o:hsc" Option; do
           SRCDIR="$SOURCESROOT/kernel/latest"
           NOSOURCE=1
           NOCONF=1
-          BUILDCMD="make-kpkg clean;CONCURRENCY_LEVEL=2 time fakeroot make-kpkg --append-to-version=-ajnasz kernel_image kernel_headers"
+          CONCURRENCY_LEVEL=2 
+          CLEANCMD="make-kpkg clean"
+          BUILDCMD="time fakeroot make-kpkg --append-to-version=-ajnasz kernel_image kernel_headers"
           NOINSTALL=1
         ;;
 
