@@ -74,7 +74,7 @@ while getopts "p:v:b:o:hsc" Option; do
         'mpd')
           SRCDIR="$SOURCESROOT/mpd"
           VCS="git"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm --enable-mms --enable-http-output --enable-fifo --enable-alsa --enable-lame-encoder --enable-mpg123 --enable-curl"
         ;;
 
         'mpdas')
