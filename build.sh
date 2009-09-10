@@ -1,17 +1,17 @@
 #!/bin/sh
 function help {
-echo "Usage:"
-echo "$ ./build [arguments]"
-echo "Arguments"
-printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
-printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
-printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', kernel, irssi, git\n"
-printf "\t-o\tuse it to to specify custom configure options\n"
-printf "\t-s\tuse it if you don't want to update the source\n"
-printf "\t-c\tuse it if you don't want to run the configure script\n"
-printf "\t-i\tuse it if you don't want to install the stuff after compile\n"
-printf "\t-m\tuse it if you don't want to run the make command\n"
-printf "\t-h\tprints this help\n"
+  echo "Usage:"
+  echo "$ ./build [arguments]"
+  echo "Arguments"
+  printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
+  printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
+  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git'\n"
+  printf "\t-o\tuse it to to specify custom configure options\n"
+  printf "\t-s\tuse it if you don't want to update the source\n"
+  printf "\t-c\tuse it if you don't want to run the configure script\n"
+  printf "\t-i\tuse it if you don't want to install the stuff after compile\n"
+  printf "\t-m\tuse it if you don't want to run the make command\n"
+  printf "\t-h\tprints this help\n"
 }
 
 function getSource {
@@ -42,30 +42,29 @@ NOCONF=0;
 NOINSTALL=0;
 NOBUILD=0;
 PATCH=0;
+BUILD_ENVS=''
 VCS='';
 
 while getopts "p:v:b:o:hsc" Option; do
   case $Option in
     'p') # path
 
-    if [ -z "$SRCDIR" ];
-    then
-      SRCDIR="$OPTARG";
-    fi
-
+      if [ -z "$SRCDIR" ];
+      then
+        SRCDIR="$OPTARG";
+      fi
     ;;
 
     'v') # VCS
-    if [ -z "$VCS" ];
-    then
-      case "$OPTARG" in
-        'git')VCS='git';;
-        'svn')VCS='svn';;
-        'hg')VCS='hg';;
-        'cvs')VCS='cvs';;
-      esac
-    fi
-
+      if [ -z "$VCS" ];
+      then
+        case "$OPTARG" in
+          'git')VCS='git';;
+          'svn')VCS='svn';;
+          'hg')VCS='hg';;
+          'cvs')VCS='cvs';;
+        esac
+      fi
     ;;
 
     'b') # predefined project
@@ -129,7 +128,6 @@ while getopts "p:v:b:o:hsc" Option; do
         ;;
 
         'mutt')
-
           # DEBIAN CONF:
           # -DOMAIN
           # +DEBUG
