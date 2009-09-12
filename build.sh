@@ -173,8 +173,8 @@ while getopts "p:v:b:o:hsc" Option; do
         'git')
           VCS='git';
           SRCDIR="$SOURCESROOT/git";
-          BUILDCMD="make prefix=$PREFIX all -j2";
-          INSTALLCMD="make prefix=$PREFIX install";
+          BUILDCMD="make all html -j2";
+          INSTALLCMD="sudo make install && sudo make install-html && sudo make quick-install-man";
         ;;
       esac;
     ;;
