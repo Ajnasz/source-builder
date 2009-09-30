@@ -175,7 +175,8 @@ while getopts "p:v:b:o:hsc" Option; do
           VCS='git';
           SRCDIR="$SOURCESROOT/git";
           BUILDCMD="make all html -j2";
-          INSTALLCMD="sudo make install && sudo make install-html && sudo make quick-install-man";
+          INSTALLCMD="sudo make install install-html quick-install-man";
+          POSTINSTALL="sudo cp contrib/completion/git-completion.bash /etc/bash_completion.d/git";
         ;;
       esac;
     ;;
