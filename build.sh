@@ -35,6 +35,7 @@ PREFIX='/usr/local';
 BUILDCMD="make -j2";
 CLEANCMD="make clean";
 INSTALLCMD='sudo make install';
+POSTINSTALL='';
 SRCDIR='';
 CONFIGUREOPTS="--prefix=$PREFIX";
 NOSOURCE=0;
@@ -307,3 +308,12 @@ then
 else
   echo "skip install"
 fi
+
+if [ ! -z "$POSTINSTALL" ];
+then
+    echo "post install: $POSTINSTALL";
+    if ! $POSTINSTALL;
+    then
+      exit 1;
+    fi;
+fi;
