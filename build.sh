@@ -87,7 +87,7 @@ while getopts "p:v:b:o:hsc" Option; do
         'ncmpcpp')
           SRCDIR="$SOURCESROOT/ncmpcpp"
           VCS="git"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-clock --enable-outputs"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-clock --enable-outputs --enable-visualizer"
         ;;
 
         'fluxbox')
