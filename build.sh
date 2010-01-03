@@ -5,7 +5,7 @@ function help {
   echo "Arguments"
   printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
   printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
-  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux'\n"
+  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', mc\n"
   printf "\t-o\tuse it to to specify custom configure options\n"
   printf "\t-s\tuse it if you don't want to update the source\n"
   printf "\t-c\tuse it if you don't want to run the configure script\n"
@@ -76,6 +76,11 @@ while getopts "p:v:b:o:hsc" Option; do
           SRCDIR="$SOURCESROOT/mpd"
           VCS="git"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm --enable-mms --enable-http-output --enable-fifo --enable-alsa --enable-lame-encoder --enable-mpg123 --enable-curl"
+        ;;
+
+        'libmpdclient')
+          SRCDIR="$SOURCESROOT/libmpdclient"
+          VCS="git"
         ;;
 
         'mpdas')
@@ -183,6 +188,12 @@ while getopts "p:v:b:o:hsc" Option; do
           VCS='cvs'
           SRCDIR="$SOURCESROOT/tmux"
           NOCONF=1
+        ;;
+
+        'mc')
+          VCS='git'
+          SRCDIR="$SOURCESROOT/mc"
+        ;;
       esac;
     ;;
 
