@@ -151,7 +151,7 @@ while getopts "p:v:b:o:hsc" Option; do
 
           SRCDIR="$SOURCESROOT/mutt"
           VCS="hg"
-          CONFIGUREOPTS="--enable-external-dotlock"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-external-dotlock"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-debug"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-external-dotlock"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-pop --enable-imap --enable-smtp --with-gss --with-gnutls --with-sasl"
