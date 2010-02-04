@@ -5,7 +5,7 @@ function help {
   echo "Arguments"
   printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
   printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
-  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', mc, conky\n"
+  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky'\n"
   printf "\t-o\tuse it to to specify custom configure options\n"
   printf "\t-s\tuse it if you don't want to update the source\n"
   printf "\t-c\tuse it if you don't want to run the configure script\n"
