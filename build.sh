@@ -102,7 +102,7 @@ while getopts "p:v:b:o:hsc" Option; do
 
         'vim')
           SRCDIR="$SOURCESROOT/vim7.2"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --with-compiledby=ajnasz"
           VCS="svn"
         ;;
 
