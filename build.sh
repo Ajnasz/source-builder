@@ -119,6 +119,7 @@ while getopts "p:v:b:o:hsc" Option; do
         'libtorrent')
           SRCDIR="$SOURCESROOT/libtorrent"
           VCS="svn"
+          POSTINSTALL="sudo ldconfig";
         ;;
 
         'urxvt')
