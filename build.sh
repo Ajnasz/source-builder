@@ -101,9 +101,9 @@ while getopts "p:v:b:o:hsc" Option; do
         ;;
 
         'vim')
-          SRCDIR="$SOURCESROOT/vim7.2"
+          SRCDIR="$SOURCESROOT/vim"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --with-compiledby=ajnasz"
-          VCS="svn"
+          VCS="hg"
         ;;
 
         'mplayer')
