@@ -1,4 +1,20 @@
 #!/bin/sh
+
+SOURCESROOT="/home/ajnasz/src";
+PREFIX='/usr/local';
+BUILDCMD="make -j2";
+CLEANCMD="make clean";
+INSTALLCMD='sudo make install';
+POSTINSTALL='';
+SRCDIR='';
+CONFIGUREOPTS="--prefix=$PREFIX";
+NOSOURCE=0;
+NOCONF=0;
+NOINSTALL=0;
+NOBUILD=0;
+PATCH=0;
+BUILD_ENVS=''
+VCS='';
 function help {
   echo "Usage:"
   echo "$ ./build [arguments]"
@@ -29,49 +45,8 @@ case $1 in
   ;;
 esac
 }
-
-SOURCESROOT="/home/ajnasz/src";
-PREFIX='/usr/local';
-BUILDCMD="make -j2";
-CLEANCMD="make clean";
-INSTALLCMD='sudo make install';
-POSTINSTALL='';
-SRCDIR='';
-CONFIGUREOPTS="--prefix=$PREFIX";
-NOSOURCE=0;
-NOCONF=0;
-NOINSTALL=0;
-NOBUILD=0;
-PATCH=0;
-BUILD_ENVS=''
-VCS='';
-
-while getopts "p:v:b:o:hsc" Option; do
-  case $Option in
-    'p') # path
-
-      if [ -z "$SRCDIR" ];
-      then
-        SRCDIR="$OPTARG";
-      fi
-    ;;
-
-    'v') # VCS
-      if [ -z "$VCS" ];
-      then
-        case "$OPTARG" in
-          'git')VCS='git';;
-          'svn')VCS='svn';;
-          'hg')VCS='hg';;
-          'cvs')VCS='cvs';;
-        esac
-      fi
-    ;;
-
-    'b') # predefined project
-
-      case $OPTARG in
-
+function setConfig {
+  case $1 in
         'mpd')
           SRCDIR="$SOURCESROOT/mpd"
           VCS="git"
@@ -209,7 +184,49 @@ while getopts "p:v:b:o:hsc" Option; do
           BUILDCMD="dpkg-buildpackage"
         ;;
 
-      esac;
+  esac
+}
+
+
+n=1
+while [ $# -gt 0 ]
+do
+  case $1 in
+    -*) break;;
+    *) eval "arg_$n=\$1"; n=$(( $n + 1 )) ;;
+  esac
+  shift
+done
+
+if [ $arg_1 ];
+then
+  setConfig $arg_1;
+fi;
+
+while getopts "p:v:b:o:hsc" Option; do
+  case $Option in
+    'p') # path
+
+      if [ -z "$SRCDIR" ];
+      then
+        SRCDIR="$OPTARG";
+      fi
+    ;;
+
+    'v') # VCS
+      if [ -z "$VCS" ];
+      then
+        case "$OPTARG" in
+          'git')VCS='git';;
+          'svn')VCS='svn';;
+          'hg')VCS='hg';;
+          'cvs')VCS='cvs';;
+        esac
+      fi
+    ;;
+
+    'b') # predefined project
+      setConfig $OPTARG;
     ;;
 
     'o')
