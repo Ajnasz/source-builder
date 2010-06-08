@@ -100,8 +100,10 @@ function setConfig {
         ;;
 
         'urxvt')
-          SRCDIR="$SOURCESROOT/rxvt-unicode"
-          VCS="cvs"
+          SRCDIR="$SOURCESROOT/urxvt.git"
+          VCS="git-cvs"
+          GIT_CVS_PARS='-p x -v -d :pserver:anonymous@cvs.schmorp.de:/schmorpforge rxvt-unicode'
+
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl"
           PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
         ;;
@@ -163,9 +165,10 @@ function setConfig {
         ;;
 
         'tmux')
-          VCS='cvs'
-          SRCDIR="$SOURCESROOT/tmux"
-          NOCONF=1
+          VCS='git-cvs'
+          GIT_CVS_PARS='-p x -v -d :pserver:anonymous@tmux.cvs.sourceforge.net:/cvsroot/tmux tmux'
+          SRCDIR="$SOURCESROOT/tmux.git"
+          # NOCONF=1
         ;;
 
         'mc')
