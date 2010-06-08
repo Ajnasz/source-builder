@@ -15,6 +15,7 @@ NOBUILD=0;
 PATCH=0;
 BUILD_ENVS=''
 VCS='';
+GIT_CVS_PARS='';
 function help {
   echo "Usage:"
   echo "$ ./build [arguments]"
@@ -34,6 +35,7 @@ function getSource {
 echo "soruce type: $1";
 case $1 in
   'git') git pull;;
+  'git-cvs') git cvsimport $GIT_CVS_PARS;;
   'hg') hg pull;hg update;;
   'svn') svn up;;
   'cvs') cvs up;;
