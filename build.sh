@@ -79,7 +79,7 @@ function setConfig {
 
         'vim')
           SRCDIR="$SOURCESROOT/vim"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --with-compiledby=ajnasz"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz"
           VCS="hg"
         ;;
 
