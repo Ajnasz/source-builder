@@ -18,15 +18,16 @@ VCS='';
 GIT_CVS_PARS='';
 function help {
   echo "Usage:"
-  echo "$ ./build [arguments]"
+  echo "$ ./build [arguments] \$project"
   echo "Arguments"
+  printf "\t-i\tuse it to get informations about the build\n"
+  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky', 'xvid'\n"
   printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
   printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
-  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky', 'xvid'\n"
   printf "\t-o\tuse it to to specify custom configure options\n"
   printf "\t-s\tuse it if you don't want to update the source\n"
   printf "\t-c\tuse it if you don't want to run the configure script\n"
-  printf "\t-i\tuse it if you don't want to install the stuff after compile\n"
+  printf "\t-n\tuse it if you don't want to install the stuff after compile\n"
   printf "\t-m\tuse it if you don't want to run the make command\n"
   printf "\t-h\tprints this help\n"
 }
@@ -192,6 +193,28 @@ function setConfig {
   esac
 }
 
+function get_build_info {
+  setConfig $1;
+  printf "project: $1\n";
+  printf "\tvcs: $VCS\n";
+  if [ "$VCS" == "git-cvs" ];then
+    printf "\tgit-cvs-pars: $GIT_CVS_PARS\n";
+  fi;
+  printf "\tsrcdir: $SRCDIR\n";
+  printf "\tconfigure: $CONFIGUREOPTS\n";
+  printf "\tbuildcmd: $BUILDCMD\n";
+  printf "\tcleancmd: $CLEANCMD\n";
+  if [ $PATCH -ne 0 ];then
+    printf "\tpatch: $PATCH\n";
+  fi;
+  if [ $NOCONF -ne 0 ];then
+    printf "\tnoconf: $NOCONF\n";
+  fi;
+  if [ $NOSOURCE -ne 0 ];then
+    printf "\tnosource: $NOSOURCE\n";
+  fi;
+}
+
 
 n=1
 while [ $# -gt 0 ]
@@ -208,7 +231,7 @@ then
   setConfig $arg_1;
 fi;
 
-while getopts "p:v:b:o:hsc" Option; do
+while getopts "p:v:b:o:i:nmhsc" Option; do
   case $Option in
     'p') # path
 
@@ -246,7 +269,7 @@ while getopts "p:v:b:o:hsc" Option; do
       NOCONF=1
     ;;
 
-    'i') # no install
+    'n') # no install
       NOINSTALL=1
     ;;
 
@@ -254,9 +277,14 @@ while getopts "p:v:b:o:hsc" Option; do
       NOBUILD=1
     ;;
 
+    'i') # get info about the build
+      get_build_info $OPTARG;
+      exit 0;
+    ;;
+
     'h') # help
       help;
-    exit 0;
+      exit 0;
     ;;
   esac
 done
