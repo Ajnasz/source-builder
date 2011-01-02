@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SOURCESROOT="/home/ajnasz/src";
 PREFIX='/usr/local';
@@ -12,9 +12,10 @@ NOSOURCE=0;
 NOCONF=0;
 NOINSTALL=0;
 NOBUILD=0;
-PATCH=0;
+PATCH='';
 BUILD_ENVS=''
 VCS='';
+VCS_REMOTE=''
 GIT_CVS_PARS='';
 function help {
   echo "Usage:"
@@ -35,7 +36,14 @@ function help {
 function getSource {
 echo "soruce type: $1";
 case $1 in
-  'git') git pull;;
+  'git')
+    if [ -z "$VCS_REMOTE" ];
+    then
+      git pull;
+    else
+      git pull $VCS_REMOTE;
+    fi
+    ;;
   'git-cvs') git cvsimport $GIT_CVS_PARS;;
   'hg') hg pull;hg update;;
   'svn') svn up;;
@@ -70,17 +78,18 @@ function setConfig {
         'ncmpcpp')
           SRCDIR="$SOURCESROOT/ncmpcpp"
           VCS="git"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-clock --enable-outputs --enable-visualizer"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-clock --enable-outputs --enable-visualizer --with-taglib"
         ;;
 
         'fluxbox')
           SRCDIR="$SOURCESROOT/fluxbox"
           VCS="git"
+          VCS_REMOTE="origin master"
         ;;
 
         'vim')
           SRCDIR="$SOURCESROOT/vim"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz --enable-gui=gtk2"
           VCS="hg"
         ;;
 
@@ -105,8 +114,8 @@ function setConfig {
           VCS="git-cvs"
           GIT_CVS_PARS='-p x -v -d :pserver:anonymous@cvs.schmorp.de:/schmorpforge rxvt-unicode'
 
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl"
-          PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl --enable-256-color"
+          # PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
         ;;
 
         'qemu')
@@ -189,6 +198,14 @@ function setConfig {
           NOCONF=1
           BUILDCMD="dpkg-buildpackage"
         ;;
+
+      'libev')
+          VCS='git-cvs'
+
+          GIT_CVS_PARS='-p x -v -d :pserver:anonymous@cvs.schmorp.de/schmorpforge libev'
+          SRCDIR="$SOURCESROOT/libev"
+          # NOCONF=1
+      ;;
 
   esac
 }
@@ -354,7 +371,7 @@ else
   echo "skip configuring"
 fi
 
-if [ $PATCH -ne 0 ];
+if [ ! -z "$PATCH" ];
 then
   echo 'apply patches';
   $PATCH;
