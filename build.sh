@@ -53,7 +53,7 @@ function setConfig {
         'mpd')
           SRCDIR="$SOURCESROOT/mpd"
           VCS="git"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm --enable-mms --enable-http-output --enable-fifo --enable-alsa --enable-lame-encoder --enable-mpg123 --enable-curl"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm --enable-mms --enable-http-output --enable-fifo --enable-alsa --enable-lame-encoder --enable-mpg123 --enable-curl --with-mpc"
         ;;
 
         'libmpdclient')
