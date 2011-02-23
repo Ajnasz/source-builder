@@ -2,7 +2,7 @@
 
 SOURCESROOT="/home/ajnasz/src";
 PREFIX='/usr/local';
-BUILDCMD="make -j2";
+BUILDCMD="make -j4";
 CLEANCMD="make clean";
 INSTALLCMD='sudo make install';
 POSTINSTALL='';
@@ -15,16 +15,15 @@ NOBUILD=0;
 PATCH='';
 BUILD_ENVS=''
 VCS='';
-VCS_REMOTE=''
-GIT_CVS_PARS='';
+VCS_PARAM='';
 function help {
   echo "Usage:"
   echo "$ ./build [arguments] \$project"
   echo "Arguments"
   printf "\t-i\tuse it to get informations about the build\n"
-  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky', 'xvid'\n"
+  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky', 'xvid', 'kedpm', 'libev', 'node'\n"
   printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
-  printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg'\n"
+  printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg', 'git-cvs'\n"
   printf "\t-o\tuse it to to specify custom configure options\n"
   printf "\t-s\tuse it if you don't want to update the source\n"
   printf "\t-c\tuse it if you don't want to run the configure script\n"
@@ -36,18 +35,11 @@ function help {
 function getSource {
 echo "soruce type: $1";
 case $1 in
-  'git')
-    if [ -z "$VCS_REMOTE" ];
-    then
-      git pull;
-    else
-      git pull $VCS_REMOTE;
-    fi
-    ;;
-  'git-cvs') git cvsimport $GIT_CVS_PARS;;
-  'hg') hg pull;hg update;;
-  'svn') svn up;;
-  'cvs') cvs up;;
+  'git') git pull $VCS_PARAM;;
+  'git-cvs') git cvsimport $VCS_PARAM;;
+  'hg') hg pull;hg update $VCS_PARAM;;
+  'svn') svn up $VCS_PARAM;;
+  'cvs') cvs up $VCS_PARAM;;
   '*')
     echo "ERROR: invalid VCS"
     echo
@@ -61,7 +53,7 @@ function setConfig {
         'mpd')
           SRCDIR="$SOURCESROOT/mpd"
           VCS="git"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm --enable-mms --enable-http-output --enable-fifo --enable-alsa --enable-lame-encoder --enable-mpg123 --enable-curl --with-mpc"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-lastfm --enable-mms --enable-fifo --enable-alsa --enable-lame-encoder --enable-mpg123 --enable-curl --enable-flac"
         ;;
 
         'libmpdclient')
@@ -78,18 +70,20 @@ function setConfig {
         'ncmpcpp')
           SRCDIR="$SOURCESROOT/ncmpcpp"
           VCS="git"
+          VCS_PARAM="origin master"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-clock --enable-outputs --enable-visualizer --with-taglib"
         ;;
 
         'fluxbox')
           SRCDIR="$SOURCESROOT/fluxbox"
+          VCS_PARAM='origin master'
           VCS="git"
-          VCS_REMOTE="origin master"
         ;;
 
         'vim')
           SRCDIR="$SOURCESROOT/vim"
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz --enable-gui=gtk2"
+          CLEANCMD='make clean'
           VCS="hg"
         ;;
 
@@ -112,7 +106,7 @@ function setConfig {
         'urxvt')
           SRCDIR="$SOURCESROOT/urxvt.git"
           VCS="git-cvs"
-          GIT_CVS_PARS='-p x -v -d :pserver:anonymous@cvs.schmorp.de:/schmorpforge rxvt-unicode'
+          VCS_PARAM='-p x -v -d :pserver:anonymous@cvs.schmorp.de:/schmorpforge rxvt-unicode'
 
           CONFIGUREOPTS="$CONFIGUREOPTS --enable-xft --enable-font-styles --enable-fading --enable-transparency --enable-unicode3 --enable-perl --enable-256-color"
           # PATCH="patch -p1 < doc/urxvt-8.2-256color.patch"
@@ -156,7 +150,8 @@ function setConfig {
           NOCONF=1
           CONCURRENCY_LEVEL=2
           CLEANCMD="make-kpkg clean"
-          BUILDCMD="time fakeroot make-kpkg --append-to-version=-ajnasz kernel_image kernel_headers"
+          # BUILDCMD="time fakeroot make-kpkg kernel_image kernel_headers --initrd"
+          BUILDCMD="time fakeroot make-kpkg kernel_image kernel_headers"
           NOINSTALL=1
         ;;
 
@@ -172,13 +167,23 @@ function setConfig {
           BUILDCMD="make all html -j2";
           INSTALLCMD="sudo make install install-html quick-install-man";
           POSTINSTALL="sudo cp contrib/completion/git-completion.bash /etc/bash_completion.d/git";
+          NOSOURCE=1;
         ;;
 
         'tmux')
           VCS='git-cvs'
-          GIT_CVS_PARS='-p x -v -d :pserver:anonymous@tmux.cvs.sourceforge.net:/cvsroot/tmux tmux'
+          VCS_PARAM='-p x -v -d :pserver:anonymous@tmux.cvs.sourceforge.net:/cvsroot/tmux tmux'
           SRCDIR="$SOURCESROOT/tmux.git"
           # NOCONF=1
+        ;;
+
+        'kedpm')
+          VCS='git-cvs'
+          VCS_PARAM='-p x -v -d :pserver:anonymous@kedpm.cvs.sourceforge.net:/cvsroot/kedpm kedpm';
+          SRCDIR="$SOURCESROOT/kedpm.git";
+          INSTALLCMD='sudo python setup.py install'
+          NOBUILD=1
+          NOCONF=1
         ;;
 
         'mc')
@@ -199,13 +204,18 @@ function setConfig {
           BUILDCMD="dpkg-buildpackage"
         ;;
 
-      'libev')
-          VCS='git-cvs'
+        'libev')
+            VCS='git-cvs'
 
-          GIT_CVS_PARS='-p x -v -d :pserver:anonymous@cvs.schmorp.de/schmorpforge libev'
-          SRCDIR="$SOURCESROOT/libev"
-          # NOCONF=1
-      ;;
+            VCS_PARAM='-p x -v -d :pserver:anonymous@cvs.schmorp.de/schmorpforge libev'
+            SRCDIR="$SOURCESROOT/libev.git"
+            # NOCONF=1
+        ;;
+
+        'node')
+          VCS='git'
+          SRCDIR="$SOURCESROOT/node"
+        ;;
 
   esac
 }
@@ -214,9 +224,7 @@ function get_build_info {
   setConfig $1;
   printf "project: $1\n";
   printf "\tvcs: $VCS\n";
-  if [ "$VCS" == "git-cvs" ];then
-    printf "\tgit-cvs-pars: $GIT_CVS_PARS\n";
-  fi;
+  printf "\tvcs-param: $VCS_PARAM\n";
   printf "\tsrcdir: $SRCDIR\n";
   printf "\tconfigure: $CONFIGUREOPTS\n";
   printf "\tbuildcmd: $BUILDCMD\n";
