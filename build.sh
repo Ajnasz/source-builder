@@ -12,6 +12,7 @@ NOSOURCE=0;
 NOCONF=0;
 NOINSTALL=0;
 NOBUILD=0;
+NOCLEAN=0;
 PATCH='';
 BUILD_ENVS=''
 VCS='';
@@ -238,6 +239,9 @@ function get_build_info {
   if [ $NOSOURCE -ne 0 ];then
     printf "\tnosource: $NOSOURCE\n";
   fi;
+  if [ $NOCLEAN -ne 0 ];then
+    printf "\tnoclean: $NOCLEAN\n";
+  fi;
 }
 
 
@@ -333,6 +337,10 @@ elif ! [ -d "$SRCDIR" ]; then
   exit 3
 fi
 
+if [ NOBUILD = 1 ]
+then
+  NOCLEAN=1;
+fi
 
 cd $SRCDIR
 
@@ -345,7 +353,7 @@ else
   echo "skip getting source"
 fi
 
-if [ $NOBUILD -eq 0 ];
+if [ $NOCLEAN -eq 0 ];
 then
   echo $CLEANCMD;
   if ! $CLEANCMD;
