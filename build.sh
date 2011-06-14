@@ -83,13 +83,14 @@ function setConfig {
 
         'vim')
           SRCDIR="$SOURCESROOT/vim"
-          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz --enable-gui=gtk2"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-rubyinterp --enable-perlinterp --enable-pythoninterp --with-compiledby=ajnasz --enable-gui=gtk2 --with-features=huge"
           CLEANCMD='make clean'
           VCS="hg"
         ;;
 
         'mplayer')
           SRCDIR="$SOURCESROOT/mplayer"
+          CONFIGUREOPTS="$CONFIGUREOPTS --enable-vdpau"
           VCS="svn"
         ;;
 
