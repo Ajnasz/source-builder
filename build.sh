@@ -22,7 +22,7 @@ function help {
   echo "$ ./build [arguments] \$project"
   echo "Arguments"
   printf "\t-i\tuse it to get informations about the build\n"
-  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky', 'xvid', 'kedpm', 'libev', 'node'\n"
+  printf "\t-b\tuse it to build predefined projects. You can use: 'mpd', 'mpdas', 'libmpdclient', 'ncmpcpp', 'fluxbox', 'vim', 'mplayer', 'rtorrent', 'libtorrent', 'urxvt', 'kernel', 'irssi', 'git', 'tmux', 'mc', 'conky', 'xvid', 'kedpm', 'libev', 'node', tp_smapi\n"
   printf "\t-p\tuse it to set the path to the project. This option should be defined if you don't specifiy a project\n"
   printf "\t-v\tuse it to set the version control system type: value could be: 'git', 'svn', 'hg', 'git-cvs'\n"
   printf "\t-o\tuse it to to specify custom configure options\n"
@@ -218,6 +218,13 @@ function setConfig {
           SRCDIR="$SOURCESROOT/node"
         ;;
 
+      'tp_smapi')
+          SRCDIR="$SOURCESROOT"
+          BUILDCMD='sudo m-a -t a-i tp-smapi'
+          NOCONF=1
+          NOSOURCE=1
+          NOCLEAN=1
+          NOINSTALL=1
   esac
 }
 
